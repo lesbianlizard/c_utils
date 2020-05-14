@@ -1,6 +1,14 @@
 #ifndef CSTR_UTILS_H
 #define CSTR_UTILS_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+
 // Concatenate two C strings, dynamically allocating memory for the result
 // FIXME: do something different for the count variable
 char *
