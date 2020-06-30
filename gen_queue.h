@@ -28,8 +28,8 @@
  *    #define GQFEAT_MAX 42
  *    #include "gen_queue.h"
  *
- * 3. Include the header you included this file in any file you need access to
- *    the GQNAME_q type and related functions.
+ * 3. Include the header in which you included this file in any file where you
+ *    need access to the GQNAME_q type and related functions.
  *
  * 4. Use GQNAME_q* ptr = GQNAME_q_init() to make a new queue.
  *
