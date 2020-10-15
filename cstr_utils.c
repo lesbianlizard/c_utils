@@ -183,3 +183,11 @@ strTokenSplit(char* line_in, Strs* arr, char* token)
   return 0;
 }
 
+// Dynamically allocates a C string and copies the argument into it
+char
+*allocStr(char* string)
+{
+  char* newstr = malloc(sizeof(char) * (strlen(string) + 1));
+  strcpy(newstr, string);
+  return newstr;
+}

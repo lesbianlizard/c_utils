@@ -21,4 +21,7 @@ strReplace(char *, char *, char *, char **);
 int
 strTokenSplit(char *, Strs *, char *);
 
+char *
+allocStr(char *);
+
 #endif // CSTR_UTILS_H
