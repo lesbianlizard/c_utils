@@ -1,6 +1,7 @@
 #include "dyn_array.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 // Initialize a NAME object
 void

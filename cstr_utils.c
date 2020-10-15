@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,7 +15,9 @@
 #undef DTYPE
 #undef C_STRING_MODE
 
-#include "../344_config.h"
+#ifndef _
+#define _(asdf) (asdf)
+#endif
 
 
 // Concatenate two C strings, dynamically allocating memory for the result

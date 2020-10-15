@@ -8,6 +8,18 @@ A collection of pure C functions/utilities I've wanted to share between differen
 
 This is a really simple dynamic array system. You just `#define` a couple of variables to depending on what datatype you want an array of, then `#include dyn_array.h`. You can include it as many different times as you want with different data types. See the comments in the file for more details.
 
+To use this library, make sure it is in your include path. Then, include the header one or more times, adjusting `NAME`, `DTYPE`, and `C_STRING_MODE` to your needs, like this:
+```
+#define NAME Strs
+#define DTYPE char*
+#define C_STRING_MODE
+#include "dyn_array.h"
+#undef NAME
+#undef DTYPE
+#undef C_STRING_MODE
+```
+For the implementations, create a file called for example `dyn_array_proxy.c`, and include the implementation file one or more times as above, replacing `dyn_array.h` with `dyn_array.c`.
+
 ## cstr_utils.h
 ### cstrcat
 Concatenates two C strings, dynamically allocating memory for the result.
