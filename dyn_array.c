@@ -50,29 +50,28 @@ CONCAT(push, NAME)(NAME* arr, DTYPE new_element)
   arr->used++;
 }
 
-// Find the first occurence of search in arr and return its index.
-// Return SIZE_MAX if search is not in arr.
-size_t
-CONCAT(contains, NAME)(NAME* arr, DTYPE search)
+// Find the first occurence of search in arr, optionally return its index to an argument
+int
+CONCAT(contains, NAME)(NAME* arr, DTYPE search, size_t *idx_ret)
 {
-  size_t i;
-
-  for (i = 0; i < arr->used; i++)
+  for (size_t i = 0; i < arr->used; i++)
   {
     #ifdef C_STRING_MODE
     if (strcmp(search, arr->d[i]) == 0)
-    {
-      return i;
-    }
     #else
     if (search == arr->d[i])
-    {
-      return i;
-    }
     #endif
+    {
+      if (idx_ret)
+      {
+        *idx_ret = i;
+      }
+
+      return 1;
+    }
   }
   
-  return SIZE_MAX;
+  return 0;
 }
 
 // Remove all elements of a NAME array at an index greater than or equal to idx
@@ -111,15 +110,10 @@ CONCAT(removeIdx, NAME)(NAME* arr, size_t idx)
 void
 CONCAT(removeVals, NAME)(NAME* arr, DTYPE element)
 {
-  size_t i = CONCAT(contains, NAME)(arr, element);
+  size_t i;
 
-  while (i < SIZE_MAX)
+  while (CONCAT(contains, NAME)(arr, element, &i) > -1)
   {
-    i = CONCAT(contains, NAME)(arr, element);
-
-    if (i < SIZE_MAX)
-    {
-      CONCAT(removeIdx, NAME)(arr, i);
-    }
+    CONCAT(removeIdx, NAME)(arr, i);
   }
 }

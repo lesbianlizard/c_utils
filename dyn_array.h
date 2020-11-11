@@ -32,8 +32,8 @@ CONCAT(_grow, NAME)(NAME* arr);
 void
 CONCAT(push, NAME)(NAME* arr, DTYPE new_element);
 
-size_t
-CONCAT(contains, NAME)(NAME* arr, DTYPE search);
+int
+CONCAT(contains, NAME)(NAME* arr, DTYPE search, size_t *idx_ret);
 
 void
 CONCAT(truncate, NAME)(NAME* arr, size_t idx);
