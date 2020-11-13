@@ -112,7 +112,7 @@ CONCAT(removeVals, NAME)(NAME* arr, DTYPE element)
 {
   size_t i;
 
-  while (CONCAT(contains, NAME)(arr, element, &i) > -1)
+  while (CONCAT(contains, NAME)(arr, element, &i))
   {
     CONCAT(removeIdx, NAME)(arr, i);
   }
