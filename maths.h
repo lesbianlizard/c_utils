@@ -23,5 +23,13 @@ norm2d(struct vec2d *);
 
 void
 assign2d(struct vec2d *, struct vec2d *);
+void
+vec2d_assign(struct vec2d *, struct vec2d *);
+void
+vec3d_assign(struct vec3d *, struct vec3d *);
+
+void
+mat2d_mult(struct mat2d *, struct mat2d *, struct mat2d *);
+
 
 #endif // MATHS_H

@@ -43,8 +43,16 @@ norm2d(struct vec2d *v)
   return pow(dotp2d(v, v), 0.5);
 }
 
+// FIXME: compatibility name. delete this
 void
 assign2d(struct vec2d *dst, struct vec2d *src)
 {
+  vec2d_assign(dst, src);
+}
+
+void
+vec2d_assign(struct vec2d *dst, struct vec2d *src)
+{
   *dst = *src;
 }
+
