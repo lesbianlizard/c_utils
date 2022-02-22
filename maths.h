@@ -7,6 +7,8 @@ double
 dotp2d(struct vec2d *, struct vec2d *);
 double
 dotp3d(struct vec3d *, struct vec3d *);
+double
+dotp4d(struct vec4d *, struct vec4d *);
 
 void
 sum2d(struct vec2d *, struct vec2d *, struct vec2d *);
@@ -40,6 +42,20 @@ assign3d(struct vec3d *, struct vec3d *);
 
 void
 multmat2d(struct mat2d *, struct mat2d *, struct mat2d *);
+void
+multmat3d(struct mat3d *, struct mat3d *, struct mat3d *);
+void
+multmat4d(struct mat4d *, struct mat4d *, struct mat4d *);
+
+void
+transmat2d(struct mat2d *, struct mat2d *);
+void
+transmat3d(struct mat3d *, struct mat3d *);
+void
+transmat4d(struct mat4d *, struct mat4d *);
+
+void
+assignmat4d(struct mat4d *, struct mat4d *);
 
 
 #endif // MATHS_H
