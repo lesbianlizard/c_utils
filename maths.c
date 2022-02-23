@@ -175,14 +175,44 @@ void assignmat4d(struct mat4d *dst, struct mat4d *src)
 }
 
 void
-initmat4d(struct mat4d *mat, bool unit)
+initmat4d(struct mat4d *mat, enum mat_trans_type type, void *init_data)
 {
   memset(mat, 0, 4*sizeof(struct vec4d));
 
-  if (unit)
+  if (type == UNIT)
   {
     mat->row1.x = 1;
     mat->row2.y = 1;
+    mat->row3.z = 1;
+    mat->row4.w = 1;
+  }
+  else if (type == SCALE)
+  {
+    struct vec3d *scale = (struct vec3d *) init_data; 
+    mat->row1.x = scale->x;
+    mat->row2.y = scale->y;
+    mat->row3.z = scale->z;
+    mat->row4.w = 1;
+  }
+  else if (type == TRANS)
+  {
+    struct vec3d *trans= (struct vec3d *) init_data; 
+    mat->row1.w = trans->x;
+    mat->row2.w = trans->y;
+    mat->row3.w = trans->z;
+    mat->row1.x = 1;
+    mat->row2.y = 1;
+    mat->row3.z = 1;
+    mat->row4.w = 1;
+  }
+  else if (type == ROT_2D_ZAXIS)
+  {
+    double theta = *((double *) init_data);
+    mat->row1.x = cos(theta);
+    mat->row1.y = -sin(theta);
+    mat->row2.x = sin(theta);
+    mat->row2.y = cos(theta);
+
     mat->row3.z = 1;
     mat->row4.w = 1;
   }

@@ -5,6 +5,7 @@
 
 #include "maths_types.h"
 
+
 double
 dotp2d(struct vec2d *, struct vec2d *);
 double
@@ -60,7 +61,7 @@ void
 assignmat4d(struct mat4d *, struct mat4d *);
 
 void
-initmat4d(struct mat4d *, bool);
+initmat4d(struct mat4d *, enum mat_trans_type, void *);
 
 void
 print_mat4d(struct mat4d *, char *);

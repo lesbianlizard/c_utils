@@ -1,6 +1,15 @@
 #ifndef MATHS_TYPES_H
 #define MATHS_TYPES_H
 
+enum mat_trans_type
+{
+  NONE,
+  UNIT,
+  SCALE,
+  TRANS,
+  ROT_2D_ZAXIS,
+};
+
 struct vec2d 
 {
   double x, y;
