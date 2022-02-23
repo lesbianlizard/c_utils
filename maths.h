@@ -1,6 +1,8 @@
 #ifndef MATHS_H
 #define MATHS_H
 
+#include <stdbool.h>
+
 #include "maths_types.h"
 
 double
@@ -56,6 +58,12 @@ transmat4d(struct mat4d *, struct mat4d *);
 
 void
 assignmat4d(struct mat4d *, struct mat4d *);
+
+void
+initmat4d(struct mat4d *, bool);
+
+void
+print_mat4d(struct mat4d *, char *);
 
 
 #endif // MATHS_H

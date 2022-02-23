@@ -1,4 +1,7 @@
 #include <math.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "maths.h"
 
@@ -169,5 +172,31 @@ void assignmat4d(struct mat4d *dst, struct mat4d *src)
   dst->row2 = src->row2;
   dst->row3 = src->row3;
   dst->row4 = src->row4;
+}
+
+void
+initmat4d(struct mat4d *mat, bool unit)
+{
+  memset(mat, 0, 4*sizeof(struct vec4d));
+
+  if (unit)
+  {
+    mat->row1.x = 1;
+    mat->row2.y = 1;
+    mat->row3.z = 1;
+    mat->row4.w = 1;
+  }
+}
+
+void
+print_mat4d(struct mat4d *mat, char *label)
+{
+  printf("mat4d at %p \"%s\"\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+    mat, label,
+    mat->row1.x, mat->row1.y, mat->row1.z, mat->row1.w,
+    mat->row2.x, mat->row2.y, mat->row2.z, mat->row2.w,
+    mat->row3.x, mat->row3.y, mat->row3.z, mat->row3.w,
+    mat->row4.x, mat->row4.y, mat->row4.z, mat->row4.w
+  );
 }
 
