@@ -5,9 +5,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-// FIXME: these should be defined by the user
-#define DEBUG
-//#define DEBUG_FILE "debug.log"
+// to be copied and modified by user
+#include "debug_config.h"
 
 #ifdef DEBUG
 
@@ -16,72 +15,60 @@
 #include <time.h>
 #include <sys/time.h>
 
-// could use inline and avoid the need for a separate compilation unit but
-// that needs -std=c++17
-extern char *__DEBUG_FILENAME__;
-extern FILE *__DEBUG_FILEHANDLE__;
-extern short __DEBUG_FILEHANDLE_FAILED__; // 1 = failed, 0 = not failed
-extern struct timeval __DEBUG_TV__;
-extern struct timeval __DEBUG_PREV_TV__;
 #define DEBUG_TM_STR_LEN 10
-extern char __DEBUG_TM_STR__[DEBUG_TM_STR_LEN];
+
+struct debuginfo
+{
+  char *filename;
+  FILE *filehandle;
+  short file_open_failed; // 1 = failed, 0 = not failed
+  struct timeval tv;
+  char time_str[DEBUG_TM_STR_LEN];
+#ifdef DEBUG_SRC_FILES
+  char *src_files;
+  char **src_files_arr;
+  size_t n_src_files;
+#endif // DEBUG_SRC_FILES
+};
+
+extern struct debuginfo __DEBUG_INFO__;
 
 // FIXME: should DEBUG_CLOSE be called somewhere?
 #define DEBUG_CLOSE(...) \
    do {\
-      if (__DEBUG_FILEHANDLE__) {fclose(__DEBUG_FILEHANDLE__);}\
+      if (__DEBUG_INFO__.filehandle) {fclose(__DEBUG_INFO__.filehandle);}\
    } while (0)
-
-
-#ifdef DEBUG_FILE
-#define __DEBUG_PRINTF_SETUP_FILEHANDLE(...) \
-{ \
-  __DEBUG_FILEHANDLE__ = fopen(DEBUG_FILE, "w"); \
-  __DEBUG_FILEHANDLE_FAILED__ = __DEBUG_FILEHANDLE__ ? 0 : 1; \
-}
-#else // DEBUG_FILE
-#define __DEBUG_PRINTF_SETUP_FILEHANDLE(...) \
-{ \
-  __DEBUG_FILENAME__ = getenv("DEBUG_FILE"); \
-  /* if environment var is set AND isn't empty*/ \
-  if (__DEBUG_FILENAME__ && (strlen(__DEBUG_FILENAME__) > 0)) \
-  { \
-    __DEBUG_FILEHANDLE__ = fopen(__DEBUG_FILENAME__, "w"); \
-    __DEBUG_FILEHANDLE_FAILED__ = __DEBUG_FILEHANDLE__ ? 0 : 1; \
-  } \
-  else \
-  { \
-    __DEBUG_FILEHANDLE__ = stderr; \
-  } \
-}
-#endif // DEBUG_FILE
 
 
 #define DEBUG_PRINTF(...) \
   do { \
-    if (!__DEBUG_FILEHANDLE__ && !__DEBUG_FILEHANDLE_FAILED__) \
-    { \
-      __DEBUG_PRINTF_SETUP_FILEHANDLE(); \
-    } \
     \
-    if (__DEBUG_FILEHANDLE_FAILED__) \
+    if (__DEBUG_INFO__.file_open_failed) \
     { \
-      fprintf(stderr, "DEBUG: error in debug.h: cannot open file '%s'\n", __DEBUG_FILENAME__); \
+      fprintf(stderr, "DEBUG: error in debug.h: cannot open file '%s'\n", __DEBUG_INFO__.filename); \
     } \
     else \
     { \
-      gettimeofday(&__DEBUG_TV__, NULL); \
-      strftime(__DEBUG_TM_STR__,DEBUG_TM_STR_LEN,"%H:%M:%S",localtime(&__DEBUG_TV__.tv_sec)); \
-      fprintf(__DEBUG_FILEHANDLE__, "DEBUG [%s.%.3li] [%s+%i/%s]: ",__DEBUG_TM_STR__,__DEBUG_TV__.tv_usec/1000,__FILE__,__LINE__,__FUNCTION__); \
-      fprintf(__DEBUG_FILEHANDLE__, __VA_ARGS__);\
-      fprintf(__DEBUG_FILEHANDLE__, "\n");\
-      fflush(__DEBUG_FILEHANDLE__);\
+      gettimeofday(&__DEBUG_INFO__.tv, NULL); \
+      strftime(__DEBUG_INFO__.time_str,DEBUG_TM_STR_LEN,"%H:%M:%S",localtime(&__DEBUG_INFO__.tv.tv_sec)); \
+      fprintf(__DEBUG_INFO__.filehandle, "DEBUG [%s.%.3li] [%s+%i/%s]: ",__DEBUG_INFO__.time_str,__DEBUG_INFO__.tv.tv_usec/1000,__FILE__,__LINE__,__FUNCTION__); \
+      fprintf(__DEBUG_INFO__.filehandle, __VA_ARGS__);\
+      fprintf(__DEBUG_INFO__.filehandle, "\n");\
+      fflush(__DEBUG_INFO__.filehandle);\
     } \
   } while (0)
 
 
+int
+_DEBUG_INIT(void);
+
+#define DEBUG_INIT(...) _DEBUG_INIT()
+
 #else //DEBUG
 #define DEBUG_PRINTF(...)
+#define DEBUG_INIT(...)
 #endif //DEBUG
+
+
 
 #endif //DEBUG_H
