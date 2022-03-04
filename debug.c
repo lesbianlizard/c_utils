@@ -4,11 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef DEBUG_LEVELS
+struct debuginfo __DEBUG_INFO__ = {.level_strs = DEBUG_LEVEL_ENUM_STR};
+#else // DEBUG_LEVELS
 struct debuginfo __DEBUG_INFO__;
+#endif // DEBUG_LEVELS
 
 int
 _DEBUG_INIT(void)
 {
+  // FIXME: replace references to __DEBUG_INFO__ with a shorter name
 #ifdef DEBUG_FILE
   __DEBUG_INFO__.filehandle = fopen(DEBUG_FILE, "w");
   __DEBUG_INFO__.file_open_failed = __DEBUG_INFO__.filehandle ? 0 : 1;
@@ -27,6 +32,10 @@ _DEBUG_INIT(void)
   }
 #endif // DEBUG_FILE
 
+#ifdef DEBUG_LEVELS
+_DEBUG_PROCESS_ENVVAR_LEVELS("DEBUG_MIN_LEVEL");
+#endif // DEBUG_LEVELS
+
 #ifdef DEBUG_SRC_FILES
 _DEBUG_PROCESS_ENVVAR("DEBUG_SRC_FILES", &__DEBUG_INFO__.src_files_arr, &__DEBUG_INFO__.n_src_files);
 #endif // DEBUG_SRC_FILES
@@ -37,6 +46,27 @@ _DEBUG_PROCESS_ENVVAR("DEBUG_FUNCTIONS", &__DEBUG_INFO__.functions_arr, &__DEBUG
 
 return 0;
 }
+
+#ifdef DEBUG_LEVELS
+void
+_DEBUG_PROCESS_ENVVAR_LEVELS(char *envvar_str)
+{
+  char *string = getenv(envvar_str); 
+
+  if (string && (strlen(string) > 0))
+  {
+    for (int i = 0; i < DEBUG_LEVEL_ENUM_SIZE; i++)
+    {
+      if (strcmp(string, __DEBUG_INFO__.level_strs[i]) == 0)
+      {
+        __DEBUG_INFO__.level_min = i; 
+      }
+    }
+  }
+
+  __DEBUG_INFO__.level_min = DEBUG_MIN_LEVEL_DEFAULT;
+}
+#endif //DEBUG_LEVELS
 
 #if defined(DEBUG_SRC_FILES) || defined(DEBUG_FUNCTIONS)
 void

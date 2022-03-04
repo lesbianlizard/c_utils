@@ -21,6 +21,8 @@
 
 #define DEBUG_TM_STR_LEN 10
 
+enum __DEBUG_LEVEL_ENUM__ {DEBUG_LEVEL_ENUM_DEF};
+
 struct debuginfo
 {
   char *filename;
@@ -28,6 +30,10 @@ struct debuginfo
   short file_open_failed; // 1 = failed, 0 = not failed
   struct timeval tv;
   char time_str[DEBUG_TM_STR_LEN];
+#ifdef DEBUG_LEVELS
+  char level_strs[DEBUG_LEVEL_ENUM_SIZE][DEBUG_LEVEL_ENUM_STRLEN];
+  enum __DEBUG_LEVEL_ENUM__ level_min;
+#endif // DEBUG_LEVELS
 #ifdef DEBUG_SRC_FILES
   char **src_files_arr;
   size_t n_src_files;
@@ -77,33 +83,75 @@ if (ARRAY_SIZE > 0 || !ARRAY) \
 #define _DEBUG_CHECK_SRC_FILES
 #endif // DEBUG_SRC_FILES
 
-#define DEBUG_PRINTF(...) \
+#ifdef DEBUG_LEVELS
+#define _DEBUG_PRINT_HEADER(LEVEL) \
+fprintf(__DEBUG_INFO__.filehandle, "[%s] [%s.%.3li] [%s+%i/%s]: ",__DEBUG_INFO__.level_strs[(LEVEL)],__DEBUG_INFO__.time_str,__DEBUG_INFO__.tv.tv_usec/1000,__FILE__,__LINE__,__FUNCTION__);
+#else // DEBUG_LEVELS
+#define _DEBUG_PRINT_HEADER(LEVEL) \
+fprintf(__DEBUG_INFO__.filehandle, "DEBUG [%s.%.3li] [%s+%i/%s]: ",__DEBUG_INFO__.time_str,__DEBUG_INFO__.tv.tv_usec/1000,__FILE__,__LINE__,__FUNCTION__);
+#endif // DEBUG_LEVELS
+
+#ifdef DEBUG_LEVELS
+#define _DEBUG_CHECK_LEVEL(LEVEL) \
+if (LEVEL < __DEBUG_INFO__.level_min) \
+{ \
+  level = 0; \
+}
+#else // DEBUG_LEVELS
+#define _DEBUG_CHECK_LEVEL(...)
+#endif // DEBUG_LEVELS
+
+#if defined(DEBUG_LEVELS) && defined(DEBUG_LEVEL_ALWAYSSHOW_ENABLE)
+//#ifdef DEBUG_LEVELS
+#define _DEBUG_PRINTF_CONDITION(LEVEL) ((((src_file) || (function)) && (level)) || LEVEL == DEBUG_LEVEL_MIN_ALWAYSSHOW)
+#else // DEBUG_LEVELS
+#define _DEBUG_PRINTF_CONDITION(LEVEL) (((src_file) || (function)) && (level))
+#endif //  DEBUG_LEVELS
+
+#define _DEBUG_PRINTF(LEVEL, ...) \
   do { \
-    short src_file = 1, function = 1; \
+    short src_file = 1; \
+    short function = 1; \
+    short level = 1; \
     \
+    _DEBUG_CHECK_LEVEL(LEVEL) \
+    \
+    if (level) \
+    { \
     _DEBUG_CHECK_FUNCTIONS \
     _DEBUG_CHECK_SRC_FILES \
-    \
+    } \
     if (__DEBUG_INFO__.file_open_failed) \
     { \
       fprintf(stderr, "DEBUG: error in debug.h: cannot open file '%s'\n", __DEBUG_INFO__.filename); \
     } \
-    else if (src_file || function)\
+    else if (_DEBUG_PRINTF_CONDITION(LEVEL))\
     { \
       gettimeofday(&__DEBUG_INFO__.tv, NULL); \
       strftime(__DEBUG_INFO__.time_str,DEBUG_TM_STR_LEN,"%H:%M:%S",localtime(&__DEBUG_INFO__.tv.tv_sec)); \
-      fprintf(__DEBUG_INFO__.filehandle, "DEBUG [%s.%.3li] [%s+%i/%s]: ",__DEBUG_INFO__.time_str,__DEBUG_INFO__.tv.tv_usec/1000,__FILE__,__LINE__,__FUNCTION__); \
+      _DEBUG_PRINT_HEADER(LEVEL); \
       fprintf(__DEBUG_INFO__.filehandle, __VA_ARGS__);\
       fprintf(__DEBUG_INFO__.filehandle, "\n");\
       fflush(__DEBUG_INFO__.filehandle);\
     } \
   } while (0)
 
+#define DEBUG_PRINTF(...) \
+_DEBUG_PRINTF(DEBUG_LEVEL_DEFAULT, __VA_ARGS__)
+
+#define DEBUG_PRINTF_L(...) \
+_DEBUG_PRINTF(__VA_ARGS__)
+
 
 int
 _DEBUG_INIT(void);
 
 #define DEBUG_INIT(...) _DEBUG_INIT()
+
+#ifdef DEBUG_LEVELS
+void
+_DEBUG_PROCESS_ENVVAR_LEVELS(char *);
+#endif // DEBUG_LEVELS
 
 #ifdef DEBUG_SRC_FILES
 void
