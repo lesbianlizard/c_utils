@@ -60,6 +60,7 @@ _DEBUG_PROCESS_ENVVAR_LEVELS(char *envvar_str)
       if (strcmp(string, __DEBUG_INFO__.level_strs[i]) == 0)
       {
         __DEBUG_INFO__.level_min = i; 
+        return;
       }
     }
   }
