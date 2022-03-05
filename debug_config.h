@@ -7,10 +7,10 @@
 #define DEBUG_FUNCTIONS
 
 #define DEBUG_LEVELS
-#define DEBUG_LEVEL_ENUM_DEF  TRACE, INFO, WARNING, ERROR
-#define DEBUG_LEVEL_ENUM_STR  {"trace", "info", "warning", "error"}
+#define DEBUG_LEVEL_ENUM_DEF  LOOP, TRACE, INFO, WARNING, ERROR
+#define DEBUG_LEVEL_ENUM_STR  {"loop", "trace", "info", "warning", "error"}
 // number of elements above
-#define DEBUG_LEVEL_ENUM_SIZE 4
+#define DEBUG_LEVEL_ENUM_SIZE 5
 // ensure this is long enough for the strings in DEBUG_LEVEL_ENUM_STR
 #define DEBUG_LEVEL_ENUM_STRLEN (7 + 1)
 

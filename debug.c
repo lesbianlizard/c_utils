@@ -36,6 +36,7 @@ _DEBUG_INIT(void)
 _DEBUG_PROCESS_ENVVAR_LEVELS("DEBUG_MIN_LEVEL");
 #endif // DEBUG_LEVELS
 
+// FIXME: possibly run basename on these
 #ifdef DEBUG_SRC_FILES
 _DEBUG_PROCESS_ENVVAR("DEBUG_SRC_FILES", &__DEBUG_INFO__.src_files_arr, &__DEBUG_INFO__.n_src_files);
 #endif // DEBUG_SRC_FILES
@@ -116,7 +117,6 @@ _DEBUG_PROCESS_ENVVAR(char *envvar_str, char ***arr, size_t *arr_size)
   {
     *arr = (void *) 1;
   }
-
 }
 #endif // defined(DEBUG_SRC_FILES) || defined(DEBUG_FUNCTIONS)
 
