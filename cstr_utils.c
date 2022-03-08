@@ -28,8 +28,7 @@ cstrcat(char* str1, char* str2)
   char* result;
 
   newsize += strlen(str1) + strlen(str2);
-  result = malloc(newsize * sizeof(char));
-  result[newsize - 1] = 0;
+  result = calloc(1, newsize * sizeof(char));
 
   strcat(result, str1);
   strcat(result, str2);
